@@ -1,0 +1,44 @@
+{
+  "Q1": {
+    "content": "What color do you like?",
+    "options": [
+      "Blue",
+      "Yellow",
+      "Red"
+    ]
+  },
+  "Q2": {
+    "content": "Would you still collaborate when your opinion not accepted?",
+    "options": [
+      "Sure, my pleasure.",
+      "I need to chew it over.",
+      "NO! My opinion is the BEST!"
+    ],
+    "template": "You chose {0} and {1}, which implies you may like this.\nCheck this out!"
+  },
+  "APOD": {
+    "content": "",
+    "options": [
+      "Dislike",
+      "Like"
+    ]
+  },
+  "Q3": {
+    "content": "Which would you like?",
+    "options": [
+      "Rainbow",
+      "Holo",
+      "T-word",
+      "Animal",
+      "Bird",
+      "Nori"
+    ],
+    "template": "You chose {0}, which implies you may like this.\nCheck this out!"
+  },
+  "End": {
+    "content": "Everything is over. Type [Start] to restart.",
+    "options": [
+      "Start"
+    ]
+  }
+}
