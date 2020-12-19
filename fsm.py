@@ -1,13 +1,8 @@
 from transitions.extensions import GraphMachine
 import json
+from utils import getAPODlink, getYTlink
+from utils import send_text_message, send_button_template
 
-from utils import send_text_message
-
-def getAPODlink(date_offset=0):
-    return f"<url> {date_offset}"
-
-def getYTlink(word1):
-    return word1 + " <url>"
 
 class AstroMindMachine(GraphMachine):
 
@@ -22,51 +17,53 @@ class AstroMindMachine(GraphMachine):
     # Behavior on transitions
     def on_enter_Q1(self, event):
         q = self.scenario["Q1"]["content"]
+        send_button_template(event.reply_token, q, self.scenario["Q1"]["options"])
         print(q)
 
     def on_enter_Q2_1(self, event):
         q = self.scenario["Q2"]["content"]
+        send_button_template(event.reply_token, q, self.scenario["Q2"]["options"])
         print(q)
 
     def on_enter_Q2_2(self, event):
         q = self.scenario["Q2"]["content"]
+        send_button_template(event.reply_token, q, self.scenario["Q2"]["options"])
         print(q)
 
     def on_enter_Q2_3(self, event):
         q = self.scenario["Q2"]["content"]
+        send_button_template(event.reply_token, q, self.scenario["Q2"]["options"])
         print(q)
 
     def on_exit_Q2_1(self, event):
         word1 = self.scenario["Q1"]["options"][0]
-        data = event.postback.data
-        tokens = data.split("&!")
-        word2 = tokens[-1]
+        word2 = event.message.text
         reply = self.scenario["Q2"]["template"].format(word1, word2)
+        send_text_message(event.reply_token, reply)
         print(reply)
 
     def on_exit_Q2_2(self, event):
         word1 = self.scenario["Q1"]["options"][1]
-        data = event.postback.data
-        tokens = data.split("&!")
-        word2 = tokens[-1]
+        word2 = event.message.text
         reply = self.scenario["Q2"]["template"].format(word1, word2)
+        send_text_message(event.reply_token, reply)
         print(reply)
 
     def on_exit_Q2_3(self, event):
         word1 = self.scenario["Q1"]["options"][2]
-        data = event.postback.data
-        tokens = data.split("&!")
-        word2 = tokens[-1]
+        word2 = event.message.text
         reply = self.scenario["Q2"]["template"].format(word1, word2)
+        send_text_message(event.reply_token, reply)
         print(reply)
 
     def on_enter_APOD(self, event):
-        data = event.postback.data
-        tokens = data.split("&!")
-        option = tokens[-1]
+        option = event.message.text
         if option == self.scenario["APOD"]["options"][0]:
-            print("How about this?")
+            reply = "How about this?"
+            send_text_message(event.source.user_id, reply, False)
+            print(reply)
         img_link = getAPODlink(self.date_offset)
+        send_text_message(event.source.user_id, img_link, False)
         print(img_link)
 
     def on_enter_Q3(self, event):
@@ -74,7 +71,7 @@ class AstroMindMachine(GraphMachine):
         print(q)
 
     def on_exit_Q3(self, event):
-        data = event.postback.data
+        data = event.message.text
         tokens = data.split("&!")
         word1 = tokens[-1]
         reply = self.scenario["Q3"]["template"].format(word1)
@@ -88,34 +85,29 @@ class AstroMindMachine(GraphMachine):
 
     # Conditions
     def isOption1(self, event):
-        data = event.postback.data
-        tokens = data.split("&!")
+        data = event.message.text
         options = self.scenario["Q1"]["options"]
-        return tokens[-1] == options[0]
+        return data == options[0]
 
     def isOption2(self, event):
-        data = event.postback.data
-        tokens = data.split("&!")
+        data = event.message.text
         options = self.scenario["Q1"]["options"]
-        return tokens[-1] == options[1]
+        return data == options[1]
 
     def isOption3(self, event):
-        data = event.postback.data
-        tokens = data.split("&!")
+        data = event.message.text
         options = self.scenario["Q1"]["options"]
-        return tokens[-1] == options[2]
+        return data == options[2]
 
     def isQ2Option(self, event):
-        data = event.postback.data
-        tokens = data.split("&!")
+        data = event.message.text
         options = self.scenario["Q2"]["options"]
-        return tokens[-1] in options
+        return data in options
 
     def isQ3Option(self, event):
-        data = event.postback.data
-        tokens = data.split("&!")
+        data = event.message.text
         options = self.scenario["Q3"]["options"]
-        return tokens[-1] in options
+        return data in options
 
     def isToStart(self, event):
         text = event.message.text
@@ -219,5 +211,4 @@ if __name__ == "__main__":
     while(1):
         text = input("Wait for input: ")
         ev.message.text = text
-        ev.postback.data = "A01&!" + text
         machine.advance(ev)

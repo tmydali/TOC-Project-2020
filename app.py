@@ -43,6 +43,7 @@ def callback():
         abort(400)
 
     # if event is MessageEvent and message is TextMessage, then echo text
+    '''
     for event in events:
         if not isinstance(event, MessageEvent):
             continue
@@ -52,6 +53,7 @@ def callback():
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.message.text)
         )
+    '''
 
     return "OK"
 
@@ -79,7 +81,12 @@ def webhook_handler():
             continue
         print(f"\nFSM STATE: {machine.state}")
         print(f"REQUEST BODY: \n{body}")
-        response = machine.advance(event)
+
+        ### State Machine
+        if "exit" == event.message.text:
+            response = machine.exit(event)
+        else:
+            response = machine.advance(event)
         if response == False:
             send_text_message(event.reply_token, "Not Entering any State")
 
@@ -94,4 +101,5 @@ def show_fsm():
 
 if __name__ == "__main__":
     port = os.environ.get("PORT", 8000)
+
     app.run(host="0.0.0.0", port=port, debug=True)

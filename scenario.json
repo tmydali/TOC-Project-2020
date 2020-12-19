@@ -10,9 +10,9 @@
   "Q2": {
     "content": "Would you still collaborate when your opinion not accepted?",
     "options": [
-      "Sure, my pleasure.",
-      "I need to chew it over.",
-      "NO! My opinion is the BEST!"
+      "Sure",
+      "Chew it over",
+      "Absolutely not"
     ],
     "template": "You chose {0} and {1}, which implies you may like this.\nCheck this out!"
   },
@@ -41,4 +41,5 @@
       "Start"
     ]
   }
+
 }
