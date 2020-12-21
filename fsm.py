@@ -1,7 +1,7 @@
 from transitions.extensions import GraphMachine
 import json
-from utils import getAPODlink, getYTlink
-from utils import send_text_message, send_button_template
+from utils import getAPODlink, getYTlink, getCarouselInputItem
+from utils import send_text_message, send_button_template, send_image, send_image_carousel
 
 
 class AstroMindMachine(GraphMachine):
@@ -36,6 +36,9 @@ class AstroMindMachine(GraphMachine):
         print(q)
 
     def on_exit_Q2_1(self, event):
+        if event.message.text == self.scenario["Escape"]["exit"]:
+            return
+
         word1 = self.scenario["Q1"]["options"][0]
         word2 = event.message.text
         reply = self.scenario["Q2"]["template"].format(word1, word2)
@@ -43,6 +46,9 @@ class AstroMindMachine(GraphMachine):
         print(reply)
 
     def on_exit_Q2_2(self, event):
+        if event.message.text == self.scenario["Escape"]["exit"]:
+            return
+
         word1 = self.scenario["Q1"]["options"][1]
         word2 = event.message.text
         reply = self.scenario["Q2"]["template"].format(word1, word2)
@@ -50,6 +56,9 @@ class AstroMindMachine(GraphMachine):
         print(reply)
 
     def on_exit_Q2_3(self, event):
+        if event.message.text == self.scenario["Escape"]["exit"]:
+            return
+
         word1 = self.scenario["Q1"]["options"][2]
         word2 = event.message.text
         reply = self.scenario["Q2"]["template"].format(word1, word2)
@@ -58,29 +67,59 @@ class AstroMindMachine(GraphMachine):
 
     def on_enter_APOD(self, event):
         option = event.message.text
+        user_id = event.source.user_id
+
         if option == self.scenario["APOD"]["options"][0]:
-            reply = "How about this?"
-            send_text_message(event.source.user_id, reply, False)
-            print(reply)
-        img_link = getAPODlink(self.date_offset)
-        send_text_message(event.source.user_id, img_link, False)
-        print(img_link)
+            self.date_offset += 1
+            data, dayshift = getAPODlink(self.date_offset)
+            self.date_offset += dayshift
+            txt = self.scenario["APOD"]["template"]["dislike"]
+            txt.format(title=data["title"], explanation=data["explanation"])
+            send_text_message(user_id, txt, False)
+            send_image(user_id, [data["hdurl"], data["url"]])
+            txt = self.scenario["APOD"]["template"]["date"]
+            txt = txt.format(title=data["title"], explanation=data["explanation"], date=data["date"])
+            send_text_message(user_id, txt, False)
+
+            print(txt)
+        else:
+            data, dayshift = getAPODlink(self.date_offset)
+            self.date_offset += dayshift
+            send_image(user_id, [data["hdurl"], data["url"]])
+            txt = self.scenario["APOD"]["template"]["default"]
+            txt = txt.format(title=data["title"], explanation=data["explanation"])
+            send_text_message(user_id, txt, False)
+            print(txt)
+
+        q = self.scenario["APOD"]["content"]
+        options = self.scenario["APOD"]["options"]
+        send_button_template(user_id, q, options, False)
 
     def on_enter_Q3(self, event):
         q = self.scenario["Q3"]["content"]
+        send_text_message(event.reply_token, q)
+        itemset = getCarouselInputItem(
+            self.scenario["Q3"]["options"],
+            self.scenario["Q3"]["images"]
+        )
+        user_id = event.source.user_id
+        send_image_carousel(user_id, itemset, False)
         print(q)
 
     def on_exit_Q3(self, event):
+        if event.message.text == self.scenario["Escape"]["exit"]:
+            return
+
         data = event.message.text
-        tokens = data.split("&!")
-        word1 = tokens[-1]
-        reply = self.scenario["Q3"]["template"].format(word1)
-        link = getYTlink(word1)
+        link = getYTlink(data)
+        reply = self.scenario["Q3"]["template"].format(data, link)
+        send_text_message(event.reply_token, reply)
         print(reply)
-        print(link)
 
     def on_enter_End(self, event):
         q = self.scenario["End"]["content"]
+        user_id = event.source.user_id
+        send_text_message(user_id, q, False)
         print(q)
 
     # Conditions
@@ -118,6 +157,16 @@ class AstroMindMachine(GraphMachine):
         text = event.message.text
         options = self.scenario["APOD"]["options"]
         return text in options
+
+    def isDislike(self, event):
+        text = event.message.text
+        options = self.scenario["APOD"]["options"]
+        return text == options[0]
+
+    def isDislike2(self, event):
+        text = event.message.text
+        options = self.scenario["APOD"]["options"]
+        return text == options[1]
 
 def FSMInitialize():
     machine = AstroMindMachine(
@@ -161,13 +210,14 @@ def FSMInitialize():
                 "trigger": "advance",
                 "source": "APOD",
                 "dest": "APOD",
-                "conditions": "isAPODOption"
+                "conditions": ["isAPODOption", "isDislike"]
             },
             # YT Recommendation
             {
                 "trigger": "advance",
                 "source": "APOD",
                 "dest": "Q3",
+                "conditions": ["isAPODOption", "isDislike2"]
             },
             {
                 "trigger": "advance",

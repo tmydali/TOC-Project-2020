@@ -17,29 +17,37 @@
     "template": "You chose {0} and {1}, which implies you may like this.\nCheck this out!"
   },
   "APOD": {
-    "content": "",
+    "content": "Do you like this?",
     "options": [
       "Dislike",
-      "Like"
-    ]
+      "Not my cup of tea"
+    ],
+    "template": {
+      "default": "這是NASA的\"每日天文照\"，今天的主題是{title}.\n\n{explanation}\n\n很酷對吧？",
+      "dislike": "嗚，好吧，那這個咧",
+      "date": "這是{date}的主題{title}。\n\n{explanation}\n\n這次的內容如何？"
+    }
   },
   "Q3": {
-    "content": "Which would you like?",
+    "content": "Aren't in favor of what we provided? Which would you like?",
     "options": [
       "Rainbow",
-      "Holo",
-      "T-word",
-      "Animal",
-      "Bird",
-      "Nori"
+      "Holo"
     ],
-    "template": "You chose {0}, which implies you may like this.\nCheck this out!"
+    "images": [
+      "https://i.imgur.com/0coopZr.jpg",
+      "https://imgur.com/1DFhw3C.jpg"
+    ],
+    "template": "You chose {0}, which implies you may like this.\nCheck this out!\n{1}"
   },
   "End": {
     "content": "Everything is over. Type [Start] to restart.",
     "options": [
       "Start"
     ]
+  },
+  "Escape" : {
+    "exit": "exit"
   }
 
 }
