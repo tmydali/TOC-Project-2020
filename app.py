@@ -8,7 +8,7 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 from fsm import FSMInitialize
-from utils import send_text_message
+from utils import send_text_message, send_image
 load_dotenv()
 
 machine = FSMInitialize()
@@ -83,10 +83,16 @@ def webhook_handler():
         print(f"REQUEST BODY: \n{body}")
 
         ### State Machine
-        if "exit" == event.message.text:
+        if "fsm" == event.message.text:
+            r = request.url_root
+            route = r[:4] + "s" + r[4:] + "show-fsm"
+            send_image(event.source.user_id, [route, route])
+            response = True
+        elif "exit" == event.message.text:
             response = machine.exit(event)
         else:
             response = machine.advance(event)
+
         if response == False:
             send_text_message(event.reply_token, "Not Entering any State")
 
