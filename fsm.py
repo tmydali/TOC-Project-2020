@@ -1,10 +1,11 @@
+from transitions import Machine
 from transitions.extensions import GraphMachine
 import json
 from utils import getAPODlink, getYTlink, getCarouselInputItem
 from utils import send_text_message, send_button_template, send_image, send_image_carousel
 
 
-class AstroMindMachine(GraphMachine):
+class AstroMindMachine(Machine):
 
     date_offset = 0
     scenario = {}
@@ -241,7 +242,7 @@ def FSMInitialize():
         ],
         initial="User",
         auto_transitions=False,
-        show_conditions=True,
+        #show_conditions=True,
     )
     return machine
 
