@@ -83,18 +83,18 @@ def webhook_handler():
         print(f"REQUEST BODY: \n{body}")
 
         ### State Machine
-        if "fsm" == event.message.text:
+        if "上帝視角" == event.message.text:
             r = request.url_root
             route = r[:4] + "s" + r[4:] + "show-fsm"
             send_image(event.source.user_id, [route, route])
             response = True
-        elif "exit" == event.message.text:
+        elif "離開" == event.message.text:
             response = machine.exit(event)
         else:
             response = machine.advance(event)
 
         if response == False:
-            send_text_message(event.reply_token, "Not Entering any State")
+            print("Not Entering any State")
 
     return "OK"
 

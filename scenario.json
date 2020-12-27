@@ -1,53 +1,73 @@
 {
   "Q1": {
-    "content": "What color do you like?",
+    "title": "問題1",
+    "content": "這是個月黑風高的夜晚，你和你最好的朋友身處一片廣闊的草原。這時你抬頭一看，映入眼簾的是？",
     "options": [
-      "Blue",
-      "Yellow",
-      "Red"
+      "綿延至天際的銀河",
+      "指引北方的北極星",
+      "如雨般灑落的流星"
     ]
   },
   "Q2": {
-    "content": "Would you still collaborate when your opinion not accepted?",
+    "title": "問題2",
+    "content": "接續前面，當你看到這樣的天文景觀時，你會跟在你一旁的朋友說什麼？",
     "options": [
-      "Sure",
-      "Chew it over",
-      "Absolutely not"
+      "能跟你一起來真是太好了",
+      "...(太壯觀了說不出話)",
+      "XXX沒來真可惜"
     ],
-    "template": "You chose {0} and {1}, which implies you may like this.\nCheck this out!"
+    "template": [
+      "你是個浪漫且很在乎朋友的人，所以我猜你會喜歡這個~",
+      "你是個浪漫但偶爾做事粗線條的人，所以我猜你會喜歡這個~",
+      "你是個浪漫但偶爾會忘記他人感受的人，所以我猜你會喜歡這個~",
+      "你是個理性的人，但又不喜歡一個人獨處的感覺，所以我猜你會喜歡這個~",
+      "你是個理性的人，並且常常投入一件事就忘了自我，所以我猜你會喜歡這個~",
+      "你是個理性的人，但常常講出來的話其實並非你的本意，所以我猜你會喜歡這個~",
+      "你的運氣很好且喜歡和他人分享，所以我猜你會喜歡這個~",
+      "你最近運氣似乎不太好，所以我猜你會喜歡這個~",
+      "你最近運氣似乎不錯，但可能沉浸在這分運氣中而忘了身邊的朋友，所以我猜你會喜歡這個~"
+    ]
   },
   "APOD": {
-    "content": "Do you like this?",
+    "title": "測驗結果",
+    "content": "這張圖片符合你的喜好嗎？",
     "options": [
-      "Dislike",
-      "Not my cup of tea"
+      "不太符合",
+      "這只是隨便一張照片吧？"
     ],
     "template": {
-      "default": "這是NASA的\"每日天文照\"，今天的主題是{title}.\n\n{explanation}\n\n很酷對吧？",
-      "dislike": "嗚，好吧，那這個咧",
-      "date": "這是{date}的主題{title}。\n\n{explanation}\n\n這次的內容如何？"
+      "default": "這是NASA的\"每日天文照\"，主題是{title}.",
+      "dislike": "嗚，好吧😥那這個咧",
+      "date": "這是{date}的主題{title}。這次感覺如何？"
     }
   },
   "Q3": {
-    "content": "Aren't in favor of what we provided? Which would you like?",
+    "title": "新·問題1",
+    "content": "看來你不太滿意之前的題組😥沒關係，我還準備了另一個題組，這次保證超準！\n選一張你看順眼的圖片吧！",
     "options": [
-      "Rainbow",
-      "Holo"
+      "彩虹社",
+      "Hololive",
+      "AniMare",
+      "NoriPro",
+      "Voms"
     ],
     "images": [
-      "https://i.imgur.com/0coopZr.jpg",
-      "https://imgur.com/1DFhw3C.jpg"
+      "https://imgur.com/0coopZr.jpg",
+      "https://imgur.com/4h65qYz.jpg",
+      "https://imgur.com/iQPSzlG.jpg",
+      "https://imgur.com/AuJhezs.jpg",
+      "https://imgur.com/pVNAT9U.jpg"
     ],
-    "template": "You chose {0}, which implies you may like this.\nCheck this out!\n{1}"
+    "template": "原來你喜歡{0}的{1}喔？\n太油了吧，我都不看那些的peko\n{2}"
   },
   "End": {
-    "content": "Everything is over. Type [Start] to restart.",
+    "content": "~~~ 結束了 ~~~\n⭐想重新開始就再輸入一次「開始」\n⭐途中想離開可以隨時輸入「離開」\n⭐想看看這背後怎麼運作的可以輸入「上帝視角」",
     "options": [
-      "Start"
+      "開始"
     ]
   },
   "Escape" : {
-    "exit": "exit"
+    "exit": "離開"
   }
 
 }
