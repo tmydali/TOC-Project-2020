@@ -2,6 +2,7 @@ import os
 import requests
 import datetime
 import random
+import json
 from dotenv import load_dotenv
 from linebot import LineBotApi, WebhookParser
 from linebot.models import (
@@ -31,7 +32,7 @@ def send_text_message(token, text, isReply=True):
 
     return "OK"
 
-def send_button_template(token, text, options, isReply=True):
+def send_button_template(token, text, title, options, isReply=True):
     actions = []
     for i in options:
         item = MessageTemplateAction(label=i, text=i)
@@ -43,6 +44,7 @@ def send_button_template(token, text, options, isReply=True):
             TemplateSendMessage(
                 alt_text="Buttons template",
                 template=ButtonsTemplate(
+                    title=title,
                     text=text,
                     actions=actions
                 )
@@ -54,6 +56,7 @@ def send_button_template(token, text, options, isReply=True):
             TemplateSendMessage(
                 alt_text="Buttons template",
                 template=ButtonsTemplate(
+                    title=title,
                     text=text,
                     actions=actions
                 )
@@ -82,7 +85,6 @@ def send_image_carousel(token, itemsets, isReply=True):
         t = ImageCarouselColumn(
             image_url=img,
             action=MessageAction(
-                label=op,
                 text=op,
             )
         )
@@ -133,10 +135,13 @@ def getAPODlink(date_offset=0):
     return content, dayshift
 
 ### YT ###
-def getYTlink(text):
-    linkset = ["https://youtu.be/6K0K9kFDJ_I", "https://youtu.be/llje-FhGktY"]
-    link = linkset[random.randint(0, len(linkset)-1)]
-    return link
+def getYTlink(key):
+    ### Choose a link by random from specified dataset
+    with open("yt_channels.json", encoding="utf-8") as f:
+        linkset = json.load(f)
+    company = linkset[key]
+    person, link = random.choice((list(company.items())))
+    return person, link
 
 def getCarouselInputItem(list1, list2):
     return list(map(lambda x, y: (x, y), list1, list2))

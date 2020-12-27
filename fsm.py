@@ -17,31 +17,39 @@ class AstroMindMachine(GraphMachine):
     # Behavior on transitions
     def on_enter_Q1(self, event):
         q = self.scenario["Q1"]["content"]
-        send_button_template(event.reply_token, q, self.scenario["Q1"]["options"])
+        t = self.scenario["Q1"]["title"]
+        send_button_template(event.reply_token, q, t, self.scenario["Q1"]["options"])
         print(q)
 
     def on_enter_Q2_1(self, event):
         q = self.scenario["Q2"]["content"]
-        send_button_template(event.reply_token, q, self.scenario["Q2"]["options"])
+        t = self.scenario["Q2"]["title"]
+        send_button_template(event.reply_token, q, t, self.scenario["Q2"]["options"])
         print(q)
 
     def on_enter_Q2_2(self, event):
         q = self.scenario["Q2"]["content"]
-        send_button_template(event.reply_token, q, self.scenario["Q2"]["options"])
+        t = self.scenario["Q2"]["title"]
+        send_button_template(event.reply_token, q, t, self.scenario["Q2"]["options"])
         print(q)
 
     def on_enter_Q2_3(self, event):
         q = self.scenario["Q2"]["content"]
-        send_button_template(event.reply_token, q, self.scenario["Q2"]["options"])
+        t = self.scenario["Q2"]["title"]
+        send_button_template(event.reply_token, q, t, self.scenario["Q2"]["options"])
         print(q)
 
     def on_exit_Q2_1(self, event):
         if event.message.text == self.scenario["Escape"]["exit"]:
             return
 
-        word1 = self.scenario["Q1"]["options"][0]
         word2 = event.message.text
-        reply = self.scenario["Q2"]["template"].format(word1, word2)
+        t_index = 0
+        for i in range(len(self.scenario["Q2"]["options"])):
+            if word2 == self.scenario["Q2"]["options"][i]:
+                t_index += i
+                break
+        reply = self.scenario["Q2"]["template"][t_index]
         send_text_message(event.reply_token, reply)
         print(reply)
 
@@ -49,9 +57,13 @@ class AstroMindMachine(GraphMachine):
         if event.message.text == self.scenario["Escape"]["exit"]:
             return
 
-        word1 = self.scenario["Q1"]["options"][1]
         word2 = event.message.text
-        reply = self.scenario["Q2"]["template"].format(word1, word2)
+        t_index = 1 * len(self.scenario["Q2"]["options"])
+        for i in range(len(self.scenario["Q2"]["options"])):
+            if word2 == self.scenario["Q2"]["options"][i]:
+                t_index += i
+                break
+        reply = self.scenario["Q2"]["template"][t_index]
         send_text_message(event.reply_token, reply)
         print(reply)
 
@@ -59,9 +71,13 @@ class AstroMindMachine(GraphMachine):
         if event.message.text == self.scenario["Escape"]["exit"]:
             return
 
-        word1 = self.scenario["Q1"]["options"][2]
         word2 = event.message.text
-        reply = self.scenario["Q2"]["template"].format(word1, word2)
+        t_index = 2 * len(self.scenario["Q2"]["options"])
+        for i in range(len(self.scenario["Q2"]["options"])):
+            if word2 == self.scenario["Q2"]["options"][i]:
+                t_index += i
+                break
+        reply = self.scenario["Q2"]["template"][t_index]
         send_text_message(event.reply_token, reply)
         print(reply)
 
@@ -74,7 +90,7 @@ class AstroMindMachine(GraphMachine):
             data, dayshift = getAPODlink(self.date_offset)
             self.date_offset += dayshift
             txt = self.scenario["APOD"]["template"]["dislike"]
-            txt.format(title=data["title"], explanation=data["explanation"])
+            txt.format(title=data["title"])
             send_text_message(user_id, txt, False)
             send_image(user_id, [data["hdurl"], data["url"]])
             txt = self.scenario["APOD"]["template"]["date"]
@@ -93,7 +109,8 @@ class AstroMindMachine(GraphMachine):
 
         q = self.scenario["APOD"]["content"]
         options = self.scenario["APOD"]["options"]
-        send_button_template(user_id, q, options, False)
+        t = self.scenario["APOD"]["title"]
+        send_button_template(user_id, q, t, options, False)
 
     def on_enter_Q3(self, event):
         q = self.scenario["Q3"]["content"]
@@ -111,8 +128,8 @@ class AstroMindMachine(GraphMachine):
             return
 
         data = event.message.text
-        link = getYTlink(data)
-        reply = self.scenario["Q3"]["template"].format(data, link)
+        person, link = getYTlink(data)
+        reply = self.scenario["Q3"]["template"].format(data, person, link)
         send_text_message(event.reply_token, reply)
         print(reply)
 
