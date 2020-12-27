@@ -115,7 +115,7 @@ heroku config:set SOME_KEY={YOUR_KEY}
         - 開始：前進`Q1`
 
 ## Finite State Machine
-![fsm](./fsm.png)
+![fsm](img/fsm.png)
 
 ## Demo
 <img src="/img/screenshots.png" width="500"/>
