@@ -73,6 +73,40 @@ APOD_API_KEY={YOUR_NASA_API_KEY}
 heroku config:set SOME_KEY={YOUR_KEY}
 ```
 
+## Develop
+
+#### app.py
+
+伺服器進入點，共有三個route,
+1. /webhook：webhook掛載點，在Line Developer網頁中為機器人設定的Webhook URL必須接到此route
+2. /show-fsm：會回傳/img中的fsm.png
+3. /callback：目前沒有用
+
+#### fsm.py
+
+- _class_ AstroMindMachine
+    - 在master branch中繼承transitions.extensions.GraphMachine；在deploy branch中繼承transitions.Machine
+    - 用以控制狀態機
+- _function_ FSMInitialize
+    - 將AstroMindMachine類別instantiate的函式
+    - return: AstroMindMachine()
+- _class_ Lru_queue
+    - 管理使用者上限，並且可讓多個使用者同時執行各自的狀態機
+    - 採用Least Recently Used(LRU)策略來剔除多餘的使用者
+    - 預設上限為50人
+
+#### utils.py
+
+各種Linebot的API呼叫，以及一些從硬碟讀取資料的函式。
+
+#### scenario.json
+
+所有機器人對答的腳本。因為開發時採取控制和文案分開開發，以方便管理，故出現此檔案。
+
+#### yt_channel.json
+
+Vtuber的頻道連結資料庫。雖然說式資料庫，但其實是用json格式儲存，不過反正資料量不大，用json比較好管理。
+
 ## Usage
 #### Bot資訊
 - Line ID: @021eqist
@@ -80,6 +114,9 @@ heroku config:set SOME_KEY={YOUR_KEY}
 ![QR code](./img/line_bot_qrcode.jpg)
 
 #### 狀態
+:::info
+此Linebot最多可以同時服務50個用戶，彼此之間不受干擾。
+:::
 - 第一次使用機器人的使用者會被告知有哪些指令，所有指令皆為中文，此時處於初始狀態`user`
     - 輸入
         - 開始：前進至`Q1`
