@@ -3,7 +3,6 @@ import json
 from utils import getAPODlink, getYTlink, getCarouselInputItem
 from utils import send_text_message, send_button_template, send_image, send_image_carousel
 
-
 class AstroMindMachine(GraphMachine):
 
     date_offset = 0
@@ -261,6 +260,42 @@ def FSMInitialize():
         show_conditions=True,
     )
     return machine
+
+### User priority queue. Use Least Recently Used(LRU) policy ###
+class Lru_queue():
+    Uqueue = []
+    MachineDict = {}
+    counter = 0
+
+    def __init__(self, maxUser=50):
+        self.maxUser = maxUser
+
+    def push(self, uid):
+        if self.counter < self.maxUser:
+            self.Uqueue.append(uid)
+            self.MachineDict[uid] = FSMInitialize()
+            self.counter += 1
+        else:
+            self.handleFull(uid)
+
+    def handleFull(self, push_uid):
+        pop_uid = self.Uqueue.pop(0)
+        self.Uqueue.append(push_uid)
+        self.MachineDict.pop(pop_uid)
+        self.MachineDict[push_uid] = FSMInitialize()
+        text = f"由於你閒置太久，所以你的狀態被刪掉了，輸入「開始」重新來一次吧"
+        send_text_message(pop_uid, text, False)
+
+    def getUserMachine(self, uid):
+        try:
+            Uindex = self.Uqueue.index(uid)
+            pop = self.Uqueue.pop(Uindex)
+            self.Uqueue.append(pop)
+
+        except:
+            self.push(uid)
+
+        return self.MachineDict[uid]
 
 
 if __name__ == "__main__":

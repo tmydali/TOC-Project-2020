@@ -7,11 +7,11 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
-from fsm import FSMInitialize
+from fsm import Lru_queue
 from utils import send_text_message, send_image
 load_dotenv()
 
-machine = FSMInitialize()
+machine_q = Lru_queue()
 app = Flask(__name__, static_url_path="")
 
 
@@ -79,8 +79,11 @@ def webhook_handler():
             continue
         if not isinstance(event.message.text, str):
             continue
-        print(f"\nFSM STATE: {machine.state}")
+        uid = event.source.user_id
+        machine = machine_q.getUserMachine(uid)
+        print(f"\nFSM STATE ({uid}): {machine.state}")
         print(f"REQUEST BODY: \n{body}")
+        print(machine_q.Uqueue)
 
         ### State Machine
         if "上帝視角" == event.message.text:
