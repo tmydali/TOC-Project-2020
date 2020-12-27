@@ -1,159 +1,127 @@
-# TOC Project 2020
+# AstroPsycho
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/dc7fa47fcd809b99d087/maintainability)](https://codeclimate.com/github/NCKU-CCS/TOC-Project-2020/maintainability)
+## 簡介
 
-[![Known Vulnerabilities](https://snyk.io/test/github/NCKU-CCS/TOC-Project-2020/badge.svg)](https://snyk.io/test/github/NCKU-CCS/TOC-Project-2020)
+某天上課問同學：「我要做一個Line bot，然後我想去介接NASA的API，因為那很酷，可是我不知道要做什麼應用，誰會想知道今天太陽風的強度？」
 
+帶著眼鏡的同學回答：「不然做天氣預報咧？氣象局也有提供API啊，至少很實用。」
 
-Template Code for TOC Project 2020
+「我有想過，但那太普通了，而且一定會被拿來跟現成的預報機器人做比較。」我回。
 
-A Line bot based on a finite state machine
+這時有位長頭髮的女同學加入話題：「不然做Vtuber啊，你不是很喜歡看，寫一個推薦機器人呢？」
 
-More details in the [Slides](https://hackmd.io/@TTW/ToC-2019-Project#) and [FAQ](https://hackmd.io/s/B1Xw7E8kN)
+我不太情願的說道：「是可以啦，只是我真的很想用NASA的API，你看這個可以即時看到好奇號拍到的火星影像耶！」
+
+兩位同學抿著嘴沉默了，好吧，看起來這個提案真的很無聊。
+
+「啊！要不然」帶眼鏡的同學突發奇想「你就寫一個天氣預報，然後也可以預報太空天氣，當使用者發現天氣不好很鬱悶時，你就推薦個Vtuber給他看嘛！」
+
+「好喔，你好棒」我都忘了戴眼鏡的同學是幹話王。
+
+「不對，等等，好像不錯喔，我可以在前面先假裝是一個認真的應用程式，然後不管使用者回答什麼我都給他NASA的圖片，最後不知怎麼的再推薦一個Vtuber。這樣子怎麼樣？」
+
+我這麼認真的考慮幹話讓他們兩個都很驚訝。
+
+「欸不是，你真的要做喔？」帶眼鏡的同學對於自己的胡言亂語被採用感到很錯愕。
+
+「做，都做，反正我原本也不曉得要做什麼。」
+
+於是這個作品就誕生了。
 
 ## Setup
 
-### Prerequisite
-* Python 3.6
+### Environment
+* Windows 10
+* Python 3.7
 * Pipenv
-* Facebook Page and App
-* HTTPS Server
+* Conda
+* Heroku
 
 #### Install Dependency
-```sh
-pip3 install pipenv
-
-pipenv --three
-
+In virtual environment,
+```
 pipenv install
-
-pipenv shell
+```
+Or in global environment,
+```
+pip install -r requirements.txt
 ```
 
+pygraphviz可能會安裝失敗，這時可以用conda來裝裝看，並且可能會需要再安裝額外的Visual C++套件(Windows使用者)
+```
+conda install graphviz pygraphviz -c alubbock
+```
+其他系統使用者可參考
 * pygraphviz (For visualizing Finite State Machine)
     * [Setup pygraphviz on Ubuntu](http://www.jianshu.com/p/a3da7ecc5303)
 	* [Note: macOS Install error](https://github.com/pygraphviz/pygraphviz/issues/100)
 
-
 #### Secret Data
-You should generate a `.env` file to set Environment Variables refer to our `.env.sample`.
-`LINE_CHANNEL_SECRET` and `LINE_CHANNEL_ACCESS_TOKEN` **MUST** be set to proper values.
-Otherwise, you might not be able to run your code.
-
-#### Run Locally
-You can either setup https server or using `ngrok` as a proxy.
-
-#### a. Ngrok installation
-* [ macOS, Windows, Linux](https://ngrok.com/download)
-
-or you can use Homebrew (MAC)
-```sh
-brew cask install ngrok
+需要三個金鑰，需到LINE Developer及NASA官網申請，申請完後自行填入``.env``檔內，範例如下
+```
+LINE_CHANNEL_SECRET={YOUR_CHANNEL_SECRET}
+LINE_CHANNEL_ACCESS_TOKEN={YOUR_CHANNEL_ACCESS_TOKEN}
+APOD_API_KEY={YOUR_NASA_API_KEY}
 ```
 
-**`ngrok` would be used in the following instruction**
+#### Run On Heroku
 
-```sh
-ngrok http 8000
+由於我無法解決pygraphviz在heroku不能使用的問題，因此又開了一個branch ``deploy``，此分支可隨時push到Heroku上執行。
+
+另外金鑰的部分不能使用.env，需要自行至Heroku網站手動填入環境變數，或使用heroku CLI
 ```
-
-After that, `ngrok` would generate a https URL.
-
-#### Run the sever
-
-```sh
-python3 app.py
+heroku config:set SOME_KEY={YOUR_KEY}
 ```
-
-#### b. Servo
-
-Or You can use [servo](http://serveo.net/) to expose local servers to the internet.
-
-
-## Finite State Machine
-![fsm](./img/show-fsm.png)
 
 ## Usage
-The initial state is set to `user`.
+#### Bot資訊
+- Line ID: @021eqist
+- QR code:  
+![QR code](./img/line_bot_qrcode.jpg)
 
-Every time `user` state is triggered to `advance` to another state, it will `go_back` to `user` state after the bot replies corresponding message.
+#### 狀態
+- 第一次使用機器人的使用者會被告知有哪些指令，所有指令皆為中文，此時處於初始狀態`user`
+    - 輸入
+        - 開始：前進至`Q1`
+        - 離開：無論處於任何狀態都會前進到`End`
+        - 上帝視角：無論處於任何狀態都會回傳FSM的圖
+- `Q1`跳出按鈕選單供使用者選擇，除了前面提到的指令外，其餘的輸入都不會有任何動作，往後的狀態亦同
+    - 輸入
+        - 選項1：前進至`Q2_1`
+        - 選項2：前進至`Q2_2`
+        - 選項3：前進至`Q2_3`
+- `Q2_x`跳出按鈕選單供使用者選擇，所有為`Q2_x`的狀態其選單的文字和選項皆相同，將狀態分開只是為了要記錄使用者在`Q1`的回答
+    - 輸入
+        - 選項1：前進至`APOD`
+        - 選項2：前進至`APOD`
+        - 選項3：前進至`APOD`
+    - 回復
+        - 由Q1的3種選項搭配Q2的3種選項，總共會有9種不同的回復
+- `APOD`跳出一張圖片，及圖片的相關訊息文字，最後詢問使用者意見
+    - 輸入
+        - 選項1：表示使用者不喜歡這張圖，會將系統內部的計數器`date_offset`加一，再次進入`APOD`
+        - 選項2：表示使用者仍舊不喜歡這張圖，前進至`Q3`
+    - 回復
+        - 若選則選項1，會讓下次進入APOD時的圖片是前一天的圖片，重複選擇選項1就會不斷回溯天數
+        - 若選則選項2，會回傳對答文字
+- `Q3`跳出Image Carousal，使用者要選擇一張圖片
+    - 輸入
+        - 第1張圖：隨機給予資料庫內所有對應的Youtube連結，前進至`End`
+        - 第2張圖 ~ 第5張圖：同上
+    - 回復
+        - 資料庫內目前有彩虹社、Hololive、AniMare、NoriPro、Voms五種類別，會根據使用者選擇的圖片回傳所對應類別下的隨機一個Youtube連結
+- `End`跳出結束的提醒文字，並再次提醒使用者可使用的指令
+    - 輸入
+        - 開始：前進`Q1`
 
-* user
-	* Input: "go to state1"
-		* Reply: "I'm entering state1"
+## Finite State Machine
+![fsm](./fsm.png)
 
-	* Input: "go to state2"
-		* Reply: "I'm entering state2"
-
-## Deploy
-Setting to deploy webhooks on Heroku.
-
-### Heroku CLI installation
-
-* [macOS, Windows](https://devcenter.heroku.com/articles/heroku-cli)
-
-or you can use Homebrew (MAC)
-```sh
-brew tap heroku/brew && brew install heroku
-```
-
-or you can use Snap (Ubuntu 16+)
-```sh
-sudo snap install --classic heroku
-```
-
-### Connect to Heroku
-
-1. Register Heroku: https://signup.heroku.com
-
-2. Create Heroku project from website
-
-3. CLI Login
-
-	`heroku login`
-
-### Upload project to Heroku
-
-1. Add local project to Heroku project
-
-	heroku git:remote -a {HEROKU_APP_NAME}
-
-2. Upload project
-
-	```
-	git add .
-	git commit -m "Add code"
-	git push -f heroku master
-	```
-
-3. Set Environment - Line Messaging API Secret Keys
-
-	```
-	heroku config:set LINE_CHANNEL_SECRET=your_line_channel_secret
-	heroku config:set LINE_CHANNEL_ACCESS_TOKEN=your_line_channel_access_token
-	```
-
-4. Your Project is now running on Heroku!
-
-	url: `{HEROKU_APP_NAME}.herokuapp.com/callback`
-
-	debug command: `heroku logs --tail --app {HEROKU_APP_NAME}`
-
-5. If fail with `pygraphviz` install errors
-
-	run commands below can solve the problems
-	```
-	heroku buildpacks:set heroku/python
-	heroku buildpacks:add --index 1 heroku-community/apt
-	```
-
-	refference: https://hackmd.io/@ccw/B1Xw7E8kN?type=view#Q2-如何在-Heroku-使用-pygraphviz
+## Demo
+<img src="/img/screenshots.png" width="500"/>
 
 ## Reference
-[Pipenv](https://medium.com/@chihsuan/pipenv-更簡單-更快速的-python-套件管理工具-135a47e504f4) ❤️ [@chihsuan](https://github.com/chihsuan)
 
-[TOC-Project-2019](https://github.com/winonecheng/TOC-Project-2019) ❤️ [@winonecheng](https://github.com/winonecheng)
-
-Flask Architecture ❤️ [@Sirius207](https://github.com/Sirius207)
-
+[TOC-Project-2019](https://github.com/winonecheng/TOC-Project-2019)  
+[TOC-Project-2020](https://docs.google.com/presentation/d/e/2PACX-1vThBHTe2iRVzvead5tBeqnshkhmE61j13rMOs8iwzGgodWheJNlOntg7hXuSlMEY-Ek1l7XA1rzM-xK/pub?start=false&loop=false&delayms=3000&slide=id.g25a54d5e5a4faf37_26)  
 [Line line-bot-sdk-python](https://github.com/line/line-bot-sdk-python/tree/master/examples/flask-echo)
